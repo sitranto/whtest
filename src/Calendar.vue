@@ -1,12 +1,22 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import {computed, ref} from 'vue'
 
 const props = defineProps({
   date: { type: Date, default: new Date(), required: false },
 })
 
+const monthNames = [
+  'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь',
+  'Ноябрь', 'Декабрь'
+]
+
 const date = ref(props.date)
+
+const currentYear = ref(date.value.getFullYear())
+const currentMonth = ref(date.value.getMonth())
 const isCalendarOpened = ref(false)
+
+const currentMonthName = computed(() => monthNames[currentMonth.value])
 
 </script>
 
@@ -20,9 +30,9 @@ const isCalendarOpened = ref(false)
     />
     <div v-if="isCalendarOpened">
       <div> <!-- Заголовок компонента -->
-        <button />
-        <span></span>
-        <button />
+        <button> < </button>
+        <span>{{ currentMonthName }} {{ currentYear }}</span>
+        <button> > </button>
       </div>
 
       <div> <!-- Строка с днями недели -->
