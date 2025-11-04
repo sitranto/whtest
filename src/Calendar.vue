@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import {computed, ref} from 'vue'
+import {computed, ref, watch} from 'vue'
+
+const emit = defineEmits<{
+  (e: 'update:date', value: Date): void
+}>()
 
 const props = defineProps({
-  date: { type: Date, default: new Date(), required: false },
+  date: { type: [String, Date, null], default: null },
 })
 
 const monthNames = [
@@ -13,12 +17,29 @@ const weekDayNames = [
   'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'
 ]
 
-const date = ref(props.date)
+const date = ref(new Date())
 
-const currentYear = ref(date.value.getFullYear())
-const currentMonth = ref(date.value.getMonth())
-const isCalendarOpened = ref(false)
+watch(
+  () => props.date,
+  (newDate) => {
+    let d: Date | null = null
+    if (typeof newDate == "string") {
+      d = new Date(newDate)
+    } else if (newDate instanceof Date) {
+      d = new Date(newDate)
+    }
 
+    if (d && !isNaN(d.getTime())) {
+      date.value = d
+    } else {
+      date.value = new Date()
+    }
+  },
+  { immediate: true }
+)
+
+const currentYear = computed(() => date.value.getFullYear())
+const currentMonth = computed(() => date.value.getMonth())
 const currentMonthName = computed(() => monthNames[currentMonth.value])
 const daysInMonth = computed(() => {
   return new Date(currentYear.value, currentMonth.value + 1, 0).getDate()
@@ -29,21 +50,28 @@ const firstDayOfMonthIndex = computed(() => {
   return (firstDayIndex + 6) % 7
 })
 
+const nextMonth = () => {
+  date.value = new Date(currentYear.value, currentMonth.value + 1, 1)
+}
+
+const prevMonth = () => {
+  date.value = new Date(currentYear.value, currentMonth.value - 1, 1)
+}
+
+const selectDay = (day: number) => {
+  const selectedDate = new Date(currentYear.value, currentMonth.value, day)
+  emit('update:date', selectedDate)
+}
+
 </script>
 
 <template>
   <div>
-    <input
-      type="text"
-      @click="isCalendarOpened = true"
-      readonly
-      placeholder="Выберите дату"
-    />
-    <div v-if="isCalendarOpened" class="calendar">
+    <div class="calendar">
       <div> <!-- Заголовок компонента -->
-        <button> < </button>
+        <button @click="prevMonth"> < </button>
         <span>{{ currentMonthName }} {{ currentYear }}</span>
-        <button> > </button>
+        <button @click="nextMonth"> > </button>
       </div>
 
       <div class="weekdays"> <!-- Строка с днями недели -->
@@ -57,6 +85,7 @@ const firstDayOfMonthIndex = computed(() => {
         <div
           v-for="day in daysInMonth"
           :key="day"
+          @click="selectDay(day)"
         >
           {{ day }}
         </div>
