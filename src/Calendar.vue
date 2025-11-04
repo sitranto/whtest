@@ -1,5 +1,23 @@
 <script setup lang="ts">
 import {computed, ref, watch} from 'vue'
+import type {Locale} from "@/types/main";
+
+const locales = {
+  ru: {
+    months: [
+      'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+      'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+    ],
+    weekdays: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
+  },
+  en: {
+    months: [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ],
+    weekdays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  }
+}
 
 const emit = defineEmits<{
   (e: 'update:date', value: Date): void
@@ -7,15 +25,8 @@ const emit = defineEmits<{
 
 const props = defineProps({
   date: { type: [String, Date, null], default: null },
+  locale: { type: String as () => Locale, default: 'ru' },
 })
-
-const monthNames = [
-  'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь',
-  'Ноябрь', 'Декабрь'
-]
-const weekDayNames = [
-  'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'
-]
 
 const date = ref(new Date())
 
@@ -38,9 +49,11 @@ watch(
   { immediate: true }
 )
 
+const monthNames = computed(() => locales[props.locale].months)
+const weekDayNames = computed(() => locales[props.locale].weekdays)
 const currentYear = computed(() => date.value.getFullYear())
 const currentMonth = computed(() => date.value.getMonth())
-const currentMonthName = computed(() => monthNames[currentMonth.value])
+const currentMonthName = computed(() => monthNames.value[currentMonth.value])
 const daysInMonth = computed(() => {
   return new Date(currentYear.value, currentMonth.value + 1, 0).getDate()
 })
