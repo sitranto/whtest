@@ -14,15 +14,26 @@ const formatDate = (date: Date | null) => {
 </script>
 
 <template>
-  <label>
-    <input type="radio" v-model="currentLocale" value="ru"> Русский
-  </label>
-  <label>
-    <input type="radio" v-model="currentLocale" value="en"> English
-  </label>
+  <div class="block">
+    <label>
+      <input type="radio" v-model="currentLocale" value="ru"> Русский
+    </label>
+    <label>
+      <input type="radio" v-model="currentLocale" value="en"> English
+    </label>
 
-  <Calendar v-model:date="selectedDate" :locale="currentLocale" />
-  <span>Выбранная дата: {{ formattedDate }}</span>
+    <Calendar v-model:date="selectedDate" :locale="currentLocale" />
+    <span>Выбранная дата: {{ formattedDate }}</span>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  justify-content: center;
+  gap: 20px;
+}
+</style>

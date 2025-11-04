@@ -81,10 +81,10 @@ const selectDay = (day: number) => {
 <template>
   <div>
     <div class="calendar">
-      <div> <!-- Заголовок компонента -->
-        <button @click="prevMonth"> < </button>
+      <div class="header"> <!-- Заголовок компонента -->
+        <button @click="prevMonth" class="button"> < </button>
         <span>{{ currentMonthName }} {{ currentYear }}</span>
-        <button @click="nextMonth"> > </button>
+        <button @click="nextMonth" class="button"> > </button>
       </div>
 
       <div class="weekdays"> <!-- Строка с днями недели -->
@@ -99,6 +99,7 @@ const selectDay = (day: number) => {
           v-for="day in daysInMonth"
           :key="day"
           @click="selectDay(day)"
+          class="day"
         >
           {{ day }}
         </div>
@@ -109,7 +110,23 @@ const selectDay = (day: number) => {
 
 <style scoped>
 .calendar {
-  width: 400px
+  width: max-content;
+  border: gray solid 1px;
+  padding: 4px;
+  height: max-content;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+.button {
+  background: transparent;
+  border: none;
+}
+.button:hover {
+  cursor: pointer;
 }
 .weekdays {
   display: grid;
@@ -118,5 +135,16 @@ const selectDay = (day: number) => {
 .days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+}
+.day {
+  padding: 4px;
+  display: flex;
+  justify-content: center;
+  border: transparent solid 1px;
+}
+.day:hover {
+  cursor: pointer;
+  border: aqua solid 1px;
 }
 </style>
